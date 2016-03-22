@@ -16,16 +16,16 @@ func gaussian(x: Double, sigma: Double) -> Double
    return (1.0 / sqrt(M_PI * 2 * variance)) * pow(M_E, -pow(x, 2) / (2 * variance))
 }
 
-var weightsArray = [CGFloat]()
 
-for i in -4 ... 4
+
+let weightsArray: [CGFloat] = (-4).stride(through: 4, by: 1).map
 {
-    let y = gaussian(Double(i), sigma: sigma)
-    
-    weightsArray.append(CGFloat(y))
+    CGFloat(gaussian(Double($0), sigma: sigma))
 }
 
-let weightsVector = CIVector(values: weightsArray, count: weightsArray.count)
+
+let weightsVector = CIVector(values: weightsArray,
+                             count: weightsArray.count)
 
 let mona = CIImage(image: UIImage(named: "monalisa.jpg")!)!
 
