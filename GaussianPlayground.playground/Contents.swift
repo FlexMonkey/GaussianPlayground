@@ -7,7 +7,35 @@
 
 import UIKit
 
-let sigma = 2.0
+let sigma = 4.0
+
+extension CIVector
+{
+    func normalize() -> CIVector
+    {
+        var sum: CGFloat = 0
+        
+        for i in 0 ..< self.count
+        {
+            sum += self.valueAtIndex(i)
+        }
+        
+        if sum == 0
+        {
+            return self
+        }
+        
+        var normalizedValues = [CGFloat]()
+        
+        for i in 0 ..< self.count
+        {
+            normalizedValues.append(self.valueAtIndex(i) / sum)
+        }
+        
+        return CIVector(values: normalizedValues,
+                        count: normalizedValues.count)
+    }
+}
 
 func gaussian(x: Double, sigma: Double) -> Double
 {
@@ -25,21 +53,21 @@ let weightsArray: [CGFloat] = (-4).stride(through: 4, by: 1).map
 
 
 let weightsVector = CIVector(values: weightsArray,
-                             count: weightsArray.count)
+                             count: weightsArray.count).normalize()
 
-let mona = CIImage(image: UIImage(named: "monalisa.jpg")!)!
+let image = CIImage(image: UIImage(named: "DSCF0489.jpg")!)!
 
-let horizontal = CIFilter(name: "CIConvolution9Horizontal",
+let horizontalBluredImage = CIFilter(name: "CIConvolution9Horizontal",
     withInputParameters: [
         kCIInputWeightsKey: weightsVector,
-        kCIInputImageKey: mona,
+        kCIInputImageKey: image,
     ])!.outputImage!
 
-let vertical = CIFilter(name: "CIConvolution9Vertical",
+let verticalBlurredImage = CIFilter(name: "CIConvolution9Vertical",
     withInputParameters: [
         kCIInputWeightsKey: weightsVector,
-        kCIInputImageKey: horizontal,
+        kCIInputImageKey: horizontalBluredImage,
     ])!
 
-let final = vertical.outputImage
+let final = verticalBlurredImage.outputImage
 
